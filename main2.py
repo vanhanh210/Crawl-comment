@@ -5,16 +5,25 @@ import pandas as pd
 def check_guess(df, guess):
     # Assuming the number is in the 'Number' column
     df["Difference"] = abs(df["Number"] - guess)
-    closest_rows = df[df["Difference"] <= 10]
+    closest_rows_10 = df[df["Difference"] <= 10]
 
-    if not closest_rows.empty:
-        # Display all matching users
-        result = "Close! You are within 10 of the correct number for:\n"
-        for _, row in closest_rows.iterrows():
-            result += f"- {row['Name']}\n"
+    if not closest_rows_10.empty:
+        # Display all matching users and the guessed number within 10
+        result = f"Close! You are within 10 of the correct number ({guess}) for:\n"
+        for _, row in closest_rows_10.iterrows():
+            result += f"- {row['Name']} (Actual Number: {row['Number']})\n"
         return result
     else:
-        return "Sorry, try again. Your guess is not correct."
+        # If no one is within 10, check within 20
+        closest_rows_20 = df[df["Difference"] <= 20]
+        if not closest_rows_20.empty:
+            # Display all matching users within 20
+            result = f"Close! You are within 20 of the correct number ({guess}) for:\n"
+            for _, row in closest_rows_20.iterrows():
+                result += f"- {row['Name']} (Actual Number: {row['Number']})\n"
+            return result
+        else:
+            return "Sorry, try again. Your guess is not correct."
 
 # Streamlit app
 def main():
